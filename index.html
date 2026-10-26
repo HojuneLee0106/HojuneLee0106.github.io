@@ -327,15 +327,20 @@
           <h3>Settle Agent, 외국인 정착 지원 에이전트</h3>
           <span class="when">팀 프로젝트, AI 담당</span>
         </div>
-        <p class="lede">국내 체류 외국인의 금융·행정 정착을 돕는 에이전트입니다. 신분증을 OCR로 읽어 프로필을 만들고, 체류자격 룰로 지금 할 수 있는 일과 막혀 있는 일을 계산해 과제로 보여줍니다.</p>
+        <p class="lede">국내 체류 외국인의 금융·행정 정착을 돕는 에이전트입니다. 신분증을 OCR로 읽어 프로필을 만들고, 체류자격 룰로 지금 할 수 있는 일과 막혀 있는 일을 계산해 과제로 보여줍니다. D-2(유학)와 E-9(비전문취업)를 지원합니다.</p>
         <ul class="points">
           <li>planner, router, slot_filler, doc_builder, approval_gate, executor, replanner 노드와 엣지를 코드에 고정했고, 승인 게이트를 우회하는 경로는 두지 않았습니다.</li>
           <li>액션을 세 등급으로 나눠 L1은 자동 실행, L2는 사용자 승인 후 실행, L3(금융실명법 제3조 등 대행이 불가능한 행위)는 실행 경로 자체를 만들지 않았습니다.</li>
           <li>모델이 스스로 도구를 고르는 구간은 조회 전용 Researcher 루프 한 곳(최대 6회 호출)입니다. 도구는 체류자격 원문 대신 룰이 이미 내린 판정 결과만 돌려주기 때문에 모델이 자격을 추론하지 않습니다.</li>
           <li>BM25(한글 음절 바이그램)와 pgvector 코사인 유사도를 RRF로 합쳤고, 사용자 자격과 일치하는 문서에 <span class="num">1.6배</span>, 타 자격 전용 문서에 <span class="num">0.45배</span> 가중치를 뒀습니다. 법령 조문 <span class="num">397건</span>과 법무부 외국인체류 안내매뉴얼 <span class="num">1,212청크</span>를 색인했습니다.</li>
           <li>서식 작성에는 LLM을 쓰지 않습니다. YAML 매핑과 Jinja2 템플릿으로 값을 채우고 WeasyPrint로 PDF를 만들며, OCR 신뢰도가 <span class="num">0.95</span> 미만인 항목은 확인요망으로 표시합니다.</li>
+          <li>E-9은 코드가 아니라 룰 매트릭스 선언으로 추가했습니다. 소속 기관이 서식의 학교 칸인지 근무처 칸인지, 어떤 증빙 서류가 필요한지만 자격별로 적습니다. 근무처 변경 절차를 아직 정의하지 않았기 때문에 E-9의 시간제취업은 "가능"으로 잘못 안내하지 않도록 닫아 뒀습니다.</li>
+          <li>E-9 등록증 뒷면의 근무처를 회사 형태 표기를 기준으로 OCR 추출하고, 이름이 한 낱말인 송출국 사용자는 신뢰도를 낮춰 화면에서 확인받게 했습니다.</li>
+          <li>"선행조건 충족"과 "과제 완료"를 분리해, 이미 등록증이 있는 사람이 필요 없는 통합신청서를 만들어야 계좌개설이 열리던 문제를 고쳤습니다.</li>
+          <li>법령, 매뉴얼, 서식의 판과 마지막 확인일을 한 파일에 선언하고, 실제 파일과 어긋나거나 확인한 지 오래된 자료가 있으면 GitHub Actions가 매일 이슈를 열고 통과하면 닫게 했습니다. 배포된 컨테이너가 어느 판으로 답하는지는 /health로 노출합니다.</li>
+          <li>OCR 원문이 에이전트 state를 통해 체크포인트에 평문으로 쌓이던 것을 끊고 기존 데이터는 정리 스크립트로 지웠습니다. 세션은 마지막 활동 기준 <span class="num">30일</span> 뒤 삭제하고, 에러 응답에서 예외 메시지를 빼 프로필 값이 새지 않게 했습니다.</li>
         </ul>
-        <p class="stack">Python 3.12 · FastAPI · LangGraph · pgvector · CLOVA OCR / Spring Boot 3(Java 21) · React 18 / Docker · ECR · EC2</p>
+        <p class="stack">Python 3.12 · FastAPI · LangGraph · pgvector · CLOVA OCR / Spring Boot 3(Java 21) · React 18 / Docker · GHCR · SSM · EC2 &nbsp;|&nbsp; <a href="https://github.com/settle-AGENT/settle-agent" target="_blank" rel="noopener">github.com/settle-AGENT/settle-agent</a></p>
       </div>
 
       <div class="entry">
