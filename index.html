@@ -290,8 +290,11 @@
           <h3>맴매, 소상공인 AI 운영 매니저<span class="tag">진행 중</span></h3>
           <span class="when">팀 프로젝트, AI 담당 · 2026.08 – 현재</span>
         </div>
-        <p class="lede">점주가 올린 POS 매출로 다음 달 일별 매출을 예측하고, 그 지표를 근거로 운영 솔루션을 제안하는 서비스입니다. 6인 팀에서 매출 예측 모델의 설계, 실험, 서빙과 LLM GPU 서빙 검증을 맡았습니다.</p>
+        <p class="lede">점주가 올린 POS 매출로 다음 달 일별 매출을 예측하고, 그 지표를 근거로 운영 솔루션을 제안하는 서비스입니다. 6인 팀의 AI 2인으로 매출 예측, LLM 솔루션·인사이트 생성, 챗봇 에이전트, GPU 서빙 검증까지 AI 서버 전체를 공동으로 설계하고 구현하고 있습니다.</p>
         <ul class="points">
+          <li>LLM에는 원본 거래 대신 백엔드가 산출한 확정 지표만 넣어 모델이 수치를 만들어낼 여지를 없앴고, 모든 솔루션 카드에 근거 지표(evidence)를 붙여 숫자의 출처를 추적할 수 있게 했습니다.</li>
+          <li>솔루션 카드 3장과 인사이트를 LLM <span class="num">1회</span> 호출로 생성해 카드별 호출 대비 지연과 비용을 <span class="num">1/3</span>로 줄였고, 하루 단위로 고정해 같은 날 재진입해도 내용이 바뀌지 않게 했습니다.</li>
+          <li>챗봇은 LangGraph 단일 에이전트(agent ↔ tools)로 구성했습니다. 부족한 지표만 백엔드 조회 툴로 그때그때 가져오고 답변은 SSE로 스트리밍합니다. 요청·응답 계약은 Pydantic 스키마를 단일 진실 원천으로 두었습니다.</li>
           <li>카페 1곳의 176일치 매출(결제 <span class="num">17,125건</span>)로 Seasonal Naive, Ridge, Prophet, LightGBM, TimesFM-3를 rolling origin <span class="num">65회</span>로 비교했고, Ridge가 D+30 MAPE <span class="num">13.62%</span>로 베이스라인(<span class="num">17.51%</span>) 대비 상대 <span class="num">22%</span> 개선했습니다.</li>
           <li>초기 실험에서 모델마다 피처 결측 범위가 달라 origin 수가 34~66개로 제각각이었습니다. 이를 65개로 통일한 뒤 재평가해 비교 조건을 맞췄습니다.</li>
           <li>VIF나 permutation importance 같은 진단 지표만으로 피처를 빼지 않았습니다. 대신 반복 검증 결과로 판단해 VIF 7.51이던 <code>is_weekend</code>를 유지했고, MAPE를 <span class="num">15.26% → 14.03%</span>로 낮췄습니다.</li>
@@ -302,7 +305,7 @@
           <li>한국어 특화 모델 3종은 JSON 형식은 지키면서 근거 지표를 입력에 없는 숫자로 바꿔 써 모두 탈락했습니다. thinking 모드는 추론 서술에 토큰을 소진해 도구 선택이 <span class="num">0/6</span>이었고, L4에서는 14B AWQ가 실질 상한임을 OOM과 KV 캐시 부족으로 확인했습니다.</li>
           <li>품질은 동급이었지만 예상 트래픽(월 1천~5천 건)에서 GPU 상시 가동이 API 대비 <span class="num">19~94배</span> 비싸고 실측 가동률이 <span class="num">2%</span>여서, v1은 Claude API로 결정했습니다. 손익분기(월 <span class="num">9.4만 건</span>)에 근접하는 등 전환 신호가 오면 바로 옮길 수 있도록 대안을 검증해 뒀습니다.</li>
         </ul>
-        <p class="stack">scikit-learn · pandas · FastAPI · Pydantic · TimesFM · PEFT/LoRA · vLLM · AWQ &nbsp;|&nbsp; <a href="https://github.com/100-hours-a-week/KTB4-7th-AI" target="_blank" rel="noopener">github.com/100-hours-a-week/KTB4-7th-AI</a> · <a href="https://github.com/100-hours-a-week/KTB4-7th-wiki/wiki" target="_blank" rel="noopener">설계 문서</a></p>
+        <p class="stack">FastAPI · Pydantic · LangGraph · Claude API · SSE · scikit-learn · pandas · TimesFM · PEFT/LoRA · vLLM · AWQ &nbsp;|&nbsp; <a href="https://github.com/100-hours-a-week/KTB4-7th-AI" target="_blank" rel="noopener">github.com/100-hours-a-week/KTB4-7th-AI</a> · <a href="https://github.com/100-hours-a-week/KTB4-7th-wiki/wiki" target="_blank" rel="noopener">설계 문서</a></p>
       </div>
 
       <div class="entry">
