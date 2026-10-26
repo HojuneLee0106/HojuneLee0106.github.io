@@ -290,7 +290,7 @@
           <h3>맴매, 소상공인 AI 운영 매니저<span class="tag">진행 중</span></h3>
           <span class="when">팀 프로젝트, AI 담당 · 2026.08 – 현재</span>
         </div>
-        <p class="lede">점주가 올린 POS 매출로 다음 달 일별 매출을 예측하고, 그 지표를 근거로 운영 솔루션을 제안하는 서비스입니다. 6인 팀에서 매출 예측 모델의 설계, 실험, 서빙을 맡았습니다.</p>
+        <p class="lede">점주가 올린 POS 매출로 다음 달 일별 매출을 예측하고, 그 지표를 근거로 운영 솔루션을 제안하는 서비스입니다. 6인 팀에서 매출 예측 모델의 설계, 실험, 서빙과 LLM GPU 서빙 검증을 맡았습니다.</p>
         <ul class="points">
           <li>카페 1곳의 176일치 매출(결제 <span class="num">17,125건</span>)로 Seasonal Naive, Ridge, Prophet, LightGBM, TimesFM-3를 rolling origin <span class="num">65회</span>로 비교했고, Ridge가 D+30 MAPE <span class="num">13.62%</span>로 베이스라인(<span class="num">17.51%</span>) 대비 상대 <span class="num">22%</span> 개선했습니다.</li>
           <li>초기 실험에서 모델마다 피처 결측 범위가 달라 origin 수가 34~66개로 제각각이었습니다. 이를 65개로 통일한 뒤 재평가해 비교 조건을 맞췄습니다.</li>
@@ -298,8 +298,11 @@
           <li>MAPE에 드러나지 않던 과소예측 편향(<span class="num">-5.1%</span>)을 찾아내, 전월 대비 증가율 피처를 추가해 <span class="num">-3.4%</span>로 줄였습니다.</li>
           <li>월 1회 업로드 구조에 맞춰 예측 대상 월 내부의 lag를 쓰지 않는 배치 예측으로 설계해, horizon이 길어져도 오차가 누적되지 않게 했습니다(D+1 <span class="num">15.71%</span>, D+30 <span class="num">13.62%</span>).</li>
           <li>Ridge와 Prophet 앙상블(<span class="num">-0.41%p</span>)은 추론 비용 25배 증가 대비 이득이 작아 채택하지 않았습니다. TimesFM-3 LoRA 파인튜닝에서는 학습 데이터가 83일에서 144일로 늘면 MAPE가 <span class="num">16.06% → 13.13%</span>로 내려가는 것을 확인해, 데이터 축적 후 재평가 조건으로 남겼습니다.</li>
+          <li>솔루션 카드와 챗봇을 자체 GPU로 서빙할 수 있는지 검증하려고, 오픈소스 LLM 9종을 vLLM과 L4 24GB에서 측정했습니다. 숫자정합, JSON 준수, 도구 선택을 먼저 통과해야 속도를 비교하는 품질 게이트를 두었고, Qwen3-14B AWQ(thinking off)가 세 항목 모두 만점(<span class="num">10/10 · 10/10 · 6/6</span>)에 생성 1건 <span class="num">11.2초</span>로 Claude API(<span class="num">10.3초</span>)와 동급이었습니다.</li>
+          <li>한국어 특화 모델 3종은 JSON 형식은 지키면서 근거 지표를 입력에 없는 숫자로 바꿔 써 모두 탈락했습니다. thinking 모드는 추론 서술에 토큰을 소진해 도구 선택이 <span class="num">0/6</span>이었고, L4에서는 14B AWQ가 실질 상한임을 OOM과 KV 캐시 부족으로 확인했습니다.</li>
+          <li>품질은 동급이었지만 예상 트래픽(월 1천~5천 건)에서 GPU 상시 가동이 API 대비 <span class="num">19~94배</span> 비싸고 실측 가동률이 <span class="num">2%</span>여서, v1은 Claude API로 결정했습니다. 손익분기(월 <span class="num">9.4만 건</span>)에 근접하는 등 전환 신호가 오면 바로 옮길 수 있도록 대안을 검증해 뒀습니다.</li>
         </ul>
-        <p class="stack">scikit-learn · pandas · FastAPI · Pydantic · TimesFM · PEFT/LoRA &nbsp;|&nbsp; <a href="https://github.com/100-hours-a-week/KTB4-7th-AI" target="_blank" rel="noopener">github.com/100-hours-a-week/KTB4-7th-AI</a> · <a href="https://github.com/100-hours-a-week/KTB4-7th-wiki/wiki" target="_blank" rel="noopener">설계 문서</a></p>
+        <p class="stack">scikit-learn · pandas · FastAPI · Pydantic · TimesFM · PEFT/LoRA · vLLM · AWQ &nbsp;|&nbsp; <a href="https://github.com/100-hours-a-week/KTB4-7th-AI" target="_blank" rel="noopener">github.com/100-hours-a-week/KTB4-7th-AI</a> · <a href="https://github.com/100-hours-a-week/KTB4-7th-wiki/wiki" target="_blank" rel="noopener">설계 문서</a></p>
       </div>
 
       <div class="entry">
@@ -385,7 +388,7 @@
         </div>
         <div>
           <dt>LLM / RAG</dt>
-          <dd>LangChain, LangGraph, LangSmith, Hugging Face, PEFT/QLoRA, Chroma, pgvector, BM25/RRF, Ollama</dd>
+          <dd>LangChain, LangGraph, LangSmith, Hugging Face, PEFT/QLoRA, Chroma, pgvector, BM25/RRF, Ollama, vLLM, AWQ</dd>
         </div>
         <div>
           <dt>Backend / Infra</dt>
