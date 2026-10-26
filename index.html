@@ -287,6 +287,23 @@
 
       <div class="entry">
         <div class="entry-head">
+          <h3>맴매, 소상공인 AI 운영 매니저<span class="tag">진행 중</span></h3>
+          <span class="when">팀 프로젝트, AI 담당 · 2026.08 – 현재</span>
+        </div>
+        <p class="lede">점주가 올린 POS 매출로 다음 달 일별 매출을 예측하고, 그 지표를 근거로 운영 솔루션을 제안하는 서비스입니다. 6인 팀에서 매출 예측 모델의 설계, 실험, 서빙을 맡았습니다.</p>
+        <ul class="points">
+          <li>카페 1곳의 176일치 매출(결제 <span class="num">17,125건</span>)로 Seasonal Naive, Ridge, Prophet, LightGBM, TimesFM-3를 rolling origin <span class="num">65회</span>로 비교했고, Ridge가 D+30 MAPE <span class="num">13.62%</span>로 베이스라인(<span class="num">17.51%</span>) 대비 상대 <span class="num">22%</span> 개선했습니다.</li>
+          <li>초기 실험에서 모델마다 피처 결측 범위가 달라 origin 수가 34~66개로 제각각이었습니다. 이를 65개로 통일한 뒤 재평가해 비교 조건을 맞췄습니다.</li>
+          <li>VIF나 permutation importance 같은 진단 지표만으로 피처를 빼지 않았습니다. 대신 반복 검증 결과로 판단해 VIF 7.51이던 <code>is_weekend</code>를 유지했고, MAPE를 <span class="num">15.26% → 14.03%</span>로 낮췄습니다.</li>
+          <li>MAPE에 드러나지 않던 과소예측 편향(<span class="num">-5.1%</span>)을 찾아내, 전월 대비 증가율 피처를 추가해 <span class="num">-3.4%</span>로 줄였습니다.</li>
+          <li>월 1회 업로드 구조에 맞춰 예측 대상 월 내부의 lag를 쓰지 않는 배치 예측으로 설계해, horizon이 길어져도 오차가 누적되지 않게 했습니다(D+1 <span class="num">15.71%</span>, D+30 <span class="num">13.62%</span>).</li>
+          <li>Ridge와 Prophet 앙상블(<span class="num">-0.41%p</span>)은 추론 비용 25배 증가 대비 이득이 작아 채택하지 않았습니다. TimesFM-3 LoRA 파인튜닝에서는 학습 데이터가 83일에서 144일로 늘면 MAPE가 <span class="num">16.06% → 13.13%</span>로 내려가는 것을 확인해, 데이터 축적 후 재평가 조건으로 남겼습니다.</li>
+        </ul>
+        <p class="stack">scikit-learn · pandas · FastAPI · Pydantic · TimesFM · PEFT/LoRA &nbsp;|&nbsp; <a href="https://github.com/100-hours-a-week/KTB4-7th-AI" target="_blank" rel="noopener">github.com/100-hours-a-week/KTB4-7th-AI</a> · <a href="https://github.com/100-hours-a-week/KTB4-7th-wiki/wiki" target="_blank" rel="noopener">설계 문서</a></p>
+      </div>
+
+      <div class="entry">
+        <div class="entry-head">
           <h3>카카오 약관 QA 시스템<span class="tag">카카오 주관 AI 성능 개선 대회 최우수상</span></h3>
           <span class="when">카카오테크 부트캠프 4기</span>
         </div>
@@ -364,7 +381,7 @@
       <dl class="skills">
         <div>
           <dt>AI / ML</dt>
-          <dd>Python, PyTorch, TensorFlow, scikit-learn, Pandas, NumPy, CUDA, NVIDIA NeMo</dd>
+          <dd>Python, PyTorch, TensorFlow, scikit-learn, Pandas, NumPy, CUDA, NVIDIA NeMo, 시계열 예측(Ridge · Prophet · TimesFM)</dd>
         </div>
         <div>
           <dt>LLM / RAG</dt>
